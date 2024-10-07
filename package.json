@@ -33,7 +33,7 @@
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
-  "homepage": "https://ElBartho.github.io/pokecardexClone",
+  "homepage": "https://elBartho.github.io/pokecardexClone",
 
   "scripts": {
     "start": "react-scripts start",
