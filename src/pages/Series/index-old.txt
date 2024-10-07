@@ -1,0 +1,284 @@
+import { Box, Card, CardContent, Grid, Stack, Typography } from '@mui/material';
+import HomeLogo from '../../assets/img/pokecardexLogo.png';
+import { useEffect, useMemo, useState } from 'react';
+import pokeballIcon from '../../assets/img/PokeballIcon.png';
+import { useNavigate } from 'react-router-dom';
+import { SetData, Serie } from '../../Types/Set';
+import { useQueries, useQuery } from 'react-query';
+import { getAllSets, getSetBySeries } from '../../Service/PokemontcgSDK';
+
+const Series = () => {
+  const navigate = useNavigate();
+  const [setBySerie, setSetBySerie] = useState<Serie[]>([]);
+  const [series, setSeries] = useState<string[]>([]);
+
+  const {
+    data: setData,
+    isLoading: setLoading,
+    error: setError,
+  } = useQuery<SetData[]>('allSets', getAllSets, {
+    onSuccess(data) {
+      console.log('update SetData');
+    },
+  });
+
+  const uniqueSeries = useMemo(() => {
+    if (!setData) return [];
+    console.log('UniqueSeries');
+    return Array.from(new Set(setData.map((set) => set.series)));
+  }, [setData]);
+
+  const seriesQueries = useQueries(
+    uniqueSeries.map((serieName) => ({
+      queryKey: ['setBySeries', serieName],
+      queryFn: (): Promise<SetData[]> => getSetBySeries(serieName),
+      enabled: uniqueSeries.length > 0,
+    }))
+  );
+  const formattedSeries = useMemo(() => {
+    if (
+      seriesQueries.length > 0 &&
+      seriesQueries.every((query) => query.isSuccess)
+    ) {
+      return seriesQueries.map((query, index): Serie => {
+        const sets: SetData[] = query.data ?? [];
+        return {
+          name: uniqueSeries[index],
+          date: getOldestDate(sets),
+          sets: sets,
+        };
+      });
+    }
+    return [];
+  }, [seriesQueries, uniqueSeries]);
+
+  function getOldestDate(set: SetData[]) {
+    return set.reduce((oldest, serie) => {
+      return Date.parse(serie.releaseDate) < Date.parse(oldest)
+        ? serie.releaseDate
+        : oldest;
+    }, set[0].releaseDate);
+  }
+
+  // useEffect(() => {
+  //   console.log('useEffect triggered');
+
+  //   // Vérifie que toutes les requêtes sont réussies
+  //   if (
+  //     seriesQueries.length > 0 &&
+  //     seriesQueries.every((query) => query.isSuccess)
+  //   ) {
+  //     const formattedSeries = seriesQueries.map((query, index): Serie => {
+  //       const sets: SetData[] = query.data ?? [];
+  //       return {
+  //         name: uniqueSeries[index],
+  //         date: getOldestDate(sets),
+  //         sets: sets,
+  //       };
+  //     });
+
+  //     // Compare les données formatées à l'état précédent pour éviter les mises à jour inutiles
+  //     setSetBySerie((prev) => {
+  //       const isEqual =
+  //         JSON.stringify(prev) === JSON.stringify(formattedSeries);
+  //       return isEqual ? prev : formattedSeries; // Ne met à jour l'état que si c'est différent
+  //     });
+  //   }
+  // }, [seriesQueries, uniqueSeries]);
+
+  // useEffect(() => {
+  //   console.log('useEffect triggered');
+
+  //   // Vérifie que toutes les requêtes sont réussies
+  //   if (
+  //     seriesQueries.length > 0 &&
+  //     seriesQueries.every((query) => query.isSuccess)
+  //   ) {
+  //     const formattedSeries = seriesQueries.map((query, index): Serie => {
+  //       const sets: SetData[] = query.data ?? [];
+  //       return {
+  //         name: uniqueSeries[index],
+  //         date: getOldestDate(sets),
+  //         sets: sets,
+  //       };
+  //     });
+
+  //     // Compare les données formatées à l'état précédent pour éviter les mises à jour inutiles
+  //     setSetBySerie((prev) => {
+  //       const isEqual =
+  //         JSON.stringify(prev) === JSON.stringify(formattedSeries);
+  //       return isEqual ? prev : formattedSeries; // Ne met à jour l'état que si c'est différent
+  //     });
+  //   }
+  // }, [seriesQueries, uniqueSeries]);
+
+  // useEffect(() => {
+  //   console.log('useEffect');
+  //   console.log(seriesQueries.length);
+  //   console.log(seriesQueries.every((query) => query.isSuccess));
+
+  //   if (
+  //     seriesQueries.length > 0 &&
+  //     seriesQueries.every((query) => query.isSuccess)
+  //   ) {
+  //     const formattedSeries = seriesQueries.map((query, index): Serie => {
+  //       const sets: SetData[] = query.data ?? [];
+  //       return {
+  //         name: uniqueSeries[index],
+  //         date: getOldestDate(sets),
+  //         sets: sets,
+  //       };
+  //     });
+  //     setSetBySerie((prev) => {
+  //       const isEqual =
+  //         JSON.stringify(prev) === JSON.stringify(formattedSeries);
+  //       if (!isEqual) {
+  //         return formattedSeries;
+  //       }
+  //       return prev;
+  //     });
+  //   }
+  // }, [seriesQueries, uniqueSeries]);
+
+  // useEffect(() => {
+  //   setSeries(uniqueSeries);
+  // }, [uniqueSeries]);
+
+  return (
+    <main
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        margin: 'auto',
+      }}
+    >
+      <Box sx={{ maxWidth: '1320px', width: '100%', mr: 'auto', ml: 'auto' }}>
+        <Stack direction='column' sx={{ width: '100%', gap: 2 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              p: 4,
+            }}
+          >
+            <img
+              onClick={() => navigate('/')}
+              src={HomeLogo}
+              alt='Pokecardex Logo'
+              style={{ cursor: 'pointer' }}
+            />
+          </Box>
+          {formattedSeries.length > 0 ? (
+            <Stack className='mainStack' direction='column' sx={{ gap: 2 }}>
+              {formattedSeries
+                .sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
+                .map((serieDetails) => (
+                  <Card key={serieDetails.name} sx={{ borderRadius: '15px' }}>
+                    <CardContent>
+                      <Stack direction='column' sx={{ gap: 2 }}>
+                        <Stack direction='row' alignItems='center' gap={2}>
+                          <img
+                            style={{ width: '48px' }}
+                            src={pokeballIcon}
+                            alt='pokeball Icon'
+                          />
+                          <Typography
+                            variant='h4'
+                            color='#055EB0'
+                            sx={{ fontWeight: 'bold' }}
+                          >
+                            {serieDetails.name}
+                          </Typography>
+                        </Stack>
+                        <Grid
+                          container
+                          rowSpacing={2}
+                          columnSpacing={3}
+                          gap={0}
+                        >
+                          {serieDetails.sets
+                            .sort(
+                              (a, b) =>
+                                Date.parse(b.releaseDate) -
+                                Date.parse(a.releaseDate)
+                            )
+                            .map((set) => (
+                              <Grid item xs={3}>
+                                <Card
+                                  onClick={() =>
+                                    navigate(`/series/${set.id}`, {
+                                      state: formattedSeries,
+                                    })
+                                  }
+                                  key={set.name}
+                                  sx={{
+                                    borderRadius: '15px',
+                                    backgroundColor: '#EFEFEF',
+                                    cursor: 'pointer',
+                                  }}
+                                >
+                                  <CardContent
+                                    sx={{
+                                      p: '0 !important',
+                                    }}
+                                  >
+                                    <Stack
+                                      direction='row'
+                                      alignItems='center'
+                                      justifyContent='center'
+                                      sx={{ width: '100%', height: '100px' }}
+                                    >
+                                      <Box
+                                        sx={{
+                                          ml: 3,
+                                          // width: '100%',
+                                        }}
+                                      >
+                                        <img
+                                          src={set.images.symbol}
+                                          alt='symbol'
+                                          style={{ maxHeight: '30px' }}
+                                        />
+                                      </Box>
+                                      <Box
+                                        sx={{
+                                          flexGrow: 1,
+                                          p: 2,
+                                          boxSizing: 'border-box',
+                                          display: 'flex',
+                                          justifyContent: 'center',
+                                        }}
+                                      >
+                                        <img
+                                          src={set.images.logo}
+                                          alt='img set'
+                                          style={{
+                                            maxWidth: '100%',
+                                            height: 'auto',
+                                            maxHeight: '90px',
+                                          }}
+                                        />
+                                      </Box>
+                                    </Stack>
+                                  </CardContent>
+                                </Card>
+                              </Grid>
+                            ))}
+                        </Grid>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                ))}
+            </Stack>
+          ) : (
+            <p>chargement...</p>
+          )}
+        </Stack>
+      </Box>
+    </main>
+  );
+};
+
+export default Series;

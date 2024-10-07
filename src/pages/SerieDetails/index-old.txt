@@ -1,0 +1,269 @@
+import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
+import HomeLogo from '../../assets/img/pokecardexLogo.png';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+// import PokemontcgSDK from '../../Service/PokemontcgSDK';
+import { getAllSets, getSetCards } from '../../Service/PokemontcgSDK';
+import { Serie, CardData, SetData } from '../../Types/Set';
+import CardsContainer from '../../components/CardsContainer';
+import CollapseCard from '../../components/CollapseCard';
+import FiltersContainer from '../../components/FiltersContainer';
+import FrenchFlag from '../../assets/img/FrenchFlag.png';
+import { useQuery } from 'react-query';
+
+type UseStateHook<T> = [T, React.Dispatch<React.SetStateAction<T>>];
+
+type FilterArrayData = {
+  value: string;
+  active: boolean;
+};
+
+const SerieDetails = () => {
+  const navigate = useNavigate();
+  // const location = useLocation();
+  const [cards, setCards] = useState<CardData[]>([]);
+  const [filters, setFilters]: UseStateHook<FilterArrayData[]> = useState<
+    FilterArrayData[]
+  >([{ value: 'All Filters', active: true }]);
+  const { setId = '' } = useParams<{ setId: string }>();
+  // const [serieId, setSerieId]: UseStateHook<string> = useState<string>(
+  //   setId || ''
+  // );
+  // const series: Serie[] = location.state;
+  const {
+    data: setsData,
+    isLoading: setLoading,
+    error: setError,
+  } = useQuery<SetData[]>('allSets', getAllSets);
+
+  const parseAndFormatSets = (setsData: SetData[] = []): Serie[] => {
+    const seriesMap = new Map();
+
+    setsData.forEach((set) => {
+      const { series, releaseDate } = set;
+
+      if (!seriesMap.has(series)) {
+        seriesMap.set(series, {
+          name: series,
+          sets: [],
+          date: releaseDate,
+        });
+      }
+
+      const seriesData = seriesMap.get(series);
+      seriesData.sets.push(set);
+
+      if (Date.parse(releaseDate) < Date.parse(seriesData.date)) {
+        seriesData.date = releaseDate;
+      }
+    });
+
+    seriesMap.forEach((seriesData) => {
+      seriesData.sets.sort(
+        (a: SetData, b: SetData) =>
+          Date.parse(b.releaseDate) - Date.parse(a.releaseDate)
+      );
+    });
+    return Array.from(seriesMap.values()).sort(
+      (a, b) => Date.parse(b.date) - Date.parse(a.date)
+    );
+  };
+  const seriesFormated: Serie[] = parseAndFormatSets(setsData);
+
+  const addUniqueFilter = (filters: FilterArrayData[], newFilter: string) => {
+    const exists = filters.some((filter) => filter.value === newFilter);
+
+    if (!exists) {
+      return [...filters, { value: newFilter, active: true }];
+    }
+    return filters;
+  };
+
+  const { data, isLoading, error } = useQuery(
+    ['allCards', setId],
+    () => getSetCards(setId),
+    {
+      keepPreviousData: true,
+      enabled: !!setId,
+      onSuccess: (data) => {
+        setCards(data);
+        let rarities: FilterArrayData[] = [...filters];
+        data.forEach((card) => {
+          rarities = addUniqueFilter(rarities, card.rarity);
+        });
+        setFilters(rarities);
+      },
+    }
+  );
+
+  useEffect(() => {
+    setCards([]);
+    setFilters([{ value: 'All Filters', active: true }]);
+  }, [setId]);
+
+  return (
+    <main
+      style={{
+        backgroundColor: '#EFEFEF',
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        margin: 'auto',
+      }}
+    >
+      <Box
+        sx={{
+          maxWidth: '1320px',
+          width: '100%',
+          mr: 'auto',
+          ml: 'auto',
+          boxSizing: 'border-box',
+        }}
+      >
+        <Stack direction='column' sx={{ width: '100%', gap: 2 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              p: 4,
+            }}
+          >
+            <img
+              onClick={() => navigate('/')}
+              src={HomeLogo}
+              alt='Pokecardex Logo'
+              style={{ cursor: 'pointer' }}
+            />
+          </Box>
+          <Box>
+            <Stack direction='row' gap={2}>
+              <Box sx={{ width: '25%', pl: 2, pr: 2, boxSizing: 'border-box' }}>
+                <Stack direction='column' justifyContent='center'>
+                  {seriesFormated.map((serieDetails, index) => (
+                    <CollapseCard
+                      key={index}
+                      serie={serieDetails}
+                      setSerieId={setSerieId}
+                    />
+                  ))}
+                </Stack>
+              </Box>
+              <Box sx={{ width: '75%', pl: 2, pr: 2 }}>
+                <Stack direction='column' gap={3}>
+                  <Box>
+                    {cards?.[0] && (
+                      <Card
+                        sx={{
+                          borderRadius: '10px',
+                          boxSizing: 'border-box',
+                        }}
+                      >
+                        <CardContent
+                          sx={{
+                            p: '1rem !important',
+                          }}
+                        >
+                          <Stack
+                            direction='row'
+                            alignItems='center'
+                            justifyContent='center'
+                            sx={{ width: '100%' }}
+                          >
+                            <Box
+                              sx={{
+                                flexGrow: 1,
+                                width: '100%',
+                                p: 2,
+                                boxSizing: 'border-box',
+                                display: 'flex',
+                                justifyContent: 'center',
+                              }}
+                            >
+                              <img
+                                src={cards?.[0].set.images.logo}
+                                alt='img set'
+                                style={{
+                                  maxWidth: '100%',
+                                  height: 'auto',
+                                  maxHeight: '120px',
+                                }}
+                              />
+                            </Box>
+                            <Stack
+                              direction='column'
+                              alignItems='center'
+                              gap={3}
+                              sx={{ width: '100%' }}
+                            >
+                              <Typography
+                                variant='h5'
+                                sx={{ fontWeight: '500' }}
+                              >
+                                {cards?.[0].set.name}
+                              </Typography>
+                              <Stack direction='column' alignItems='flex-start'>
+                                <Stack
+                                  direction='row'
+                                  alignItems='center'
+                                  gap={1}
+                                >
+                                  <img
+                                    src={FrenchFlag}
+                                    alt=''
+                                    style={{ width: '25px' }}
+                                  />
+                                  <Typography>
+                                    {cards?.[0].set.releaseDate}
+                                  </Typography>
+                                </Stack>
+                                <Stack
+                                  direction='row'
+                                  alignItems='center'
+                                  gap={1}
+                                >
+                                  <img
+                                    src={cards?.[0].set.images.symbol}
+                                    alt=''
+                                    style={{ width: '25px', height: 'auto' }}
+                                  />
+                                  <Typography>
+                                    {cards?.[0].set.total} cards
+                                  </Typography>
+                                </Stack>
+                              </Stack>
+                            </Stack>
+                          </Stack>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </Box>
+                  {/* {cards && filters && ( */}
+                  {isLoading ? (
+                    <p>Loading....</p>
+                  ) : error ? (
+                    <p>An error as occured, please try again later.</p>
+                  ) : (
+                    <>
+                      <Box>
+                        <FiltersContainer
+                          filters={filters}
+                          setFilters={setFilters}
+                        />
+                      </Box>
+                      <Box>
+                        <CardsContainer cards={cards} filters={filters} />
+                      </Box>
+                    </>
+                  )}
+                </Stack>
+              </Box>
+            </Stack>
+          </Box>
+        </Stack>
+      </Box>
+    </main>
+  );
+};
+
+export default SerieDetails;
