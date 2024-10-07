@@ -153,31 +153,35 @@ const CardModal = ({ isOpen, onClose, card }: ModalProps) => {
           >
             {card.name}
           </Typography>
-          <Typography variant='h6' color='text.secondary' gutterBottom>
-            HP: {card.hp}
-          </Typography>
+          {card.hp && (
+            <Typography variant='h6' color='text.secondary' gutterBottom>
+              HP: {card.hp}
+            </Typography>
+          )}
           {card.evolvesTo && card.evolvesTo.length > 0 && (
             <Typography variant='body1' gutterBottom>
               Evolves to: <strong>{card.evolvesTo.join(', ')}</strong>
             </Typography>
           )}
-          <Box mt={2}>
-            <Typography variant='h6' gutterBottom>
-              Attacks:
-            </Typography>
-            {card.attacks.map((attack, index) => (
-              <Box key={index} mb={2}>
-                <Typography variant='subtitle1'>
-                  <strong>{attack.name}</strong>
-                </Typography>
-                <Typography variant='body2'>
-                  Cost: <strong>{attack.cost.join(', ')}</strong> | Damage:{' '}
-                  <strong>{attack.damage}</strong>
-                </Typography>
-                <Typography variant='body2'>{attack.text}</Typography>
-              </Box>
-            ))}
-          </Box>
+          {card.attacks && (
+            <Box mt={2}>
+              <Typography variant='h6' gutterBottom>
+                Attacks:
+              </Typography>
+              {card.attacks.map((attack, index) => (
+                <Box key={index} mb={2}>
+                  <Typography variant='subtitle1'>
+                    <strong>{attack.name}</strong>
+                  </Typography>
+                  <Typography variant='body2'>
+                    Cost: <strong>{attack.cost.join(', ')}</strong> | Damage:{' '}
+                    <strong>{attack.damage}</strong>
+                  </Typography>
+                  <Typography variant='body2'>{attack.text}</Typography>
+                </Box>
+              ))}
+            </Box>
+          )}
         </CardContent>
       </Card>
     </Box>,
