@@ -18,7 +18,7 @@ const Layout: React.FC<React.PropsWithChildren<{}>> = ({
   children?: React.ReactNode;
 }) => {
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
       <Root>
         <Header />
         {children}
