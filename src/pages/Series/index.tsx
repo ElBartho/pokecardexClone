@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { SetData, Serie } from '../../Types/Set';
 import { useQuery } from 'react-query';
 import { getAllSets } from '../../Service/PokemontcgSDK';
+import { parseAndFormatSets } from '../../utils/dataProcessing';
 
 const Series = () => {
   const navigate = useNavigate();
@@ -12,40 +13,10 @@ const Series = () => {
     data: setsData,
     isLoading: setLoading,
     error: setError,
-  } = useQuery<SetData[]>('allSets', getAllSets);
-
-  const parseAndFormatSets = (setsData: SetData[] = []): Serie[] => {
-    const seriesMap = new Map();
-
-    setsData.forEach((set) => {
-      const { series, releaseDate } = set;
-
-      if (!seriesMap.has(series)) {
-        seriesMap.set(series, {
-          name: series,
-          sets: [],
-          date: releaseDate,
-        });
-      }
-
-      const seriesData = seriesMap.get(series);
-      seriesData.sets.push(set);
-
-      if (Date.parse(releaseDate) < Date.parse(seriesData.date)) {
-        seriesData.date = releaseDate;
-      }
-    });
-
-    seriesMap.forEach((seriesData) => {
-      seriesData.sets.sort(
-        (a: SetData, b: SetData) =>
-          Date.parse(b.releaseDate) - Date.parse(a.releaseDate)
-      );
-    });
-    return Array.from(seriesMap.values()).sort(
-      (a, b) => Date.parse(b.date) - Date.parse(a.date)
-    );
-  };
+  } = useQuery<SetData[]>('allSets', getAllSets, {
+    staleTime: 1000 * 60 * 5,
+    cacheTime: 1000 * 60 * 30,
+  });
   const seriesFormated: Serie[] = parseAndFormatSets(setsData);
 
   return (

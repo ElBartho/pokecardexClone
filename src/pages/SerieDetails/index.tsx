@@ -1,6 +1,6 @@
 import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
 import HomeLogo from '../../assets/img/pokecardexLogo.png';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getAllSets, getSetCards } from '../../Service/PokemontcgSDK';
 import {
@@ -33,7 +33,10 @@ const SerieDetails = () => {
     data: setsData,
     isLoading: setLoading,
     error: setError,
-  } = useQuery<SetData[]>('allSets', getAllSets);
+  } = useQuery<SetData[]>('allSets', getAllSets, {
+    staleTime: 1000 * 60 * 5,
+    cacheTime: 1000 * 60 * 30,
+  });
   const seriesFormated: Serie[] = useMemo(
     () => parseAndFormatSets(setsData),
     [setsData]
@@ -49,6 +52,8 @@ const SerieDetails = () => {
     {
       keepPreviousData: true,
       enabled: !!setId,
+      staleTime: 1000 * 60 * 5,
+      cacheTime: 1000 * 60 * 30,
       onSuccess: (data) => {
         let rarities: FilterArrayData[] = [
           { name: 'All Filters', value: -1, active: true },
@@ -61,22 +66,6 @@ const SerieDetails = () => {
       },
     }
   );
-  // const rarities = useMemo(() => {
-  //   if (!cards) return [];
-  //   let rarities: FilterArrayData[] = [
-  //     { name: 'All Filters', value: -1, active: true },
-  //   ];
-  //   cards.forEach((card) => {
-  //     rarities = addUniqueFilter(rarities, card.rarity);
-  //   });
-  //   return addFiltersValue(rarities).sort((a, b) => a.value - b.value);
-  // }, [cards]);
-
-  // useEffect(() => {
-  //   if (rarities.length > 0) {
-  //     setFilters(rarities);
-  //   }
-  // }, [rarities]);
 
   return (
     <main

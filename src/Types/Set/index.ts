@@ -1,3 +1,12 @@
+// Types And Interfaces for Buttons
+
+export type buttons = {
+  name: string;
+  to: string;
+  startIcon?: React.ReactNode;
+  endIcon?: React.ReactNode;
+};
+
 // Types And Interfaces for Sets
 
 interface Legalities {
