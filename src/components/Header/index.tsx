@@ -153,7 +153,7 @@ const Header = () => {
           }}
         >
           <Link to='/'>
-            <img width='150px' src={HomeLogo} alt='Pokecardex Home Logo' />
+            <img src={HomeLogo} alt='Pokecardex Home Logo' />
           </Link>
           <Stack
             direction='row'
