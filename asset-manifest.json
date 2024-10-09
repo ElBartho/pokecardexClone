@@ -1,18 +1,18 @@
 {
   "files": {
     "main.css": "/pokecardexClone/static/css/main.e6c13ad2.css",
-    "main.js": "/pokecardexClone/static/js/main.ef0b3a2c.js",
+    "main.js": "/pokecardexClone/static/js/main.7508c5b5.js",
     "static/js/453.403015af.chunk.js": "/pokecardexClone/static/js/453.403015af.chunk.js",
     "static/media/news.png": "/pokecardexClone/static/media/news.f413befd199b3b4ffca4.png",
     "static/media/pokecardexLogo.png": "/pokecardexClone/static/media/pokecardexLogo.6f6d0775f8df7545c0a7.png",
     "static/media/pokecardexMiniLogo.png": "/pokecardexClone/static/media/pokecardexMiniLogo.b9a603e60bc4b74444ac.png",
     "index.html": "/pokecardexClone/index.html",
     "main.e6c13ad2.css.map": "/pokecardexClone/static/css/main.e6c13ad2.css.map",
-    "main.ef0b3a2c.js.map": "/pokecardexClone/static/js/main.ef0b3a2c.js.map",
+    "main.7508c5b5.js.map": "/pokecardexClone/static/js/main.7508c5b5.js.map",
     "453.403015af.chunk.js.map": "/pokecardexClone/static/js/453.403015af.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.ef0b3a2c.js"
+    "static/js/main.7508c5b5.js"
   ]
 }
