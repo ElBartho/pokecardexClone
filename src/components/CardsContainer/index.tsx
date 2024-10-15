@@ -1,6 +1,6 @@
-import { Grid, Box, Card, CardContent, Button } from '@mui/material';
+import { Grid, Box } from '@mui/material';
 import { CardData, FilterArrayData } from '../../Types/Set';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import CardModal from '../Modal';
 
 interface CardsContainerProps {
@@ -10,7 +10,6 @@ interface CardsContainerProps {
 
 const CardsContainer = ({ cards, filters }: CardsContainerProps) => {
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const openModal = (card: CardData) => {
     setSelectedCard(card);
@@ -32,7 +31,7 @@ const CardsContainer = ({ cards, filters }: CardsContainerProps) => {
               boxSizing: 'border-box',
               display: filters.find((filter) => filter.name === card.rarity)
                 ?.active
-                ? ''
+                ? 'block'
                 : 'none',
             }}
           >

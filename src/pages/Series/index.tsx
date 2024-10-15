@@ -6,6 +6,8 @@ import { SetData, Serie } from '../../Types/Set';
 import { useQuery } from 'react-query';
 import { getAllSets } from '../../Service/PokemontcgSDK';
 import { parseAndFormatSets } from '../../utils/dataProcessing';
+import theme from '../../utils/style/theme';
+import ConcreteSeamless from '../../assets/img/concreteSeamless.png';
 
 const Series = () => {
   const navigate = useNavigate();
@@ -14,7 +16,6 @@ const Series = () => {
     isLoading: setLoading,
     error: setError,
   } = useQuery<SetData[]>('allSets', getAllSets, {
-    staleTime: 1000 * 60 * 5,
     cacheTime: 1000 * 60 * 30,
   });
   const seriesFormated: Serie[] = parseAndFormatSets(setsData);
@@ -26,6 +27,7 @@ const Series = () => {
         flexDirection: 'column',
         width: '100%',
         margin: 'auto',
+        backgroundImage: `url(${ConcreteSeamless})`,
       }}
     >
       <Box sx={{ maxWidth: '1320px', width: '100%', mr: 'auto', ml: 'auto' }}>
@@ -48,7 +50,13 @@ const Series = () => {
           {seriesFormated.length > 0 ? (
             <Stack className='mainStack' direction='column' sx={{ gap: 2 }}>
               {seriesFormated.map((serieDetails) => (
-                <Card key={serieDetails.name} sx={{ borderRadius: '15px' }}>
+                <Card
+                  key={serieDetails.name}
+                  sx={{
+                    borderRadius: '15px',
+                    backgroundColor: theme.palette.primary.main,
+                  }}
+                >
                   <CardContent>
                     <Stack direction='column' sx={{ gap: 2 }}>
                       <Stack direction='row' alignItems='center' gap={2}>
@@ -59,7 +67,7 @@ const Series = () => {
                         />
                         <Typography
                           variant='h4'
-                          color='#055EB0'
+                          color={theme.palette.text.secondary}
                           sx={{ fontWeight: 'bold' }}
                         >
                           {serieDetails.name}
@@ -67,12 +75,19 @@ const Series = () => {
                       </Stack>
                       <Grid container rowSpacing={2} columnSpacing={3} gap={0}>
                         {serieDetails.sets.map((set: SetData) => (
-                          <Grid key={set.name} item xs={3}>
+                          <Grid
+                            key={set.name}
+                            item
+                            xs={12}
+                            sm={6}
+                            md={4}
+                            lg={3}
+                          >
                             <Card
                               onClick={() => navigate(`/series/${set.id}`)}
                               sx={{
                                 borderRadius: '15px',
-                                backgroundColor: '#EFEFEF',
+                                backgroundColor: theme.palette.secondary.main,
                                 cursor: 'pointer',
                               }}
                             >

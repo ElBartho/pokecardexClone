@@ -54,6 +54,7 @@ export type FilterName =
   | 'Hyper Rare'
   | 'ACE SPEC Rare'
   | 'Promo'
+  | 'Radiant Rare'
   | 'Rare Holo VMAX'
   | 'Rare Holo V'
   | 'Rare Holo GX'

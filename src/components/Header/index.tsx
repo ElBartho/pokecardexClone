@@ -25,6 +25,7 @@ import { Menu as MenuIcon, Close as CloseIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import HomeLogo from '../../assets/img/pokecardexMiniLogo.png';
 import { useState } from 'react';
+import theme from '../../utils/style/theme';
 
 type MenuItemBase = {
   name: string;
@@ -72,7 +73,7 @@ const Header = () => {
     {
       name: 'Collection',
       to: '/series',
-      toSub: ['/internationalsets', '/japanesesets'],
+      toSub: ['', ''],
       type: 'Menu',
       subMenu: ['International card manager', 'Japanese card manager'],
       anchor: anchorCollection,
@@ -168,11 +169,11 @@ const Header = () => {
                       startIcon={menu.startIcon}
                       endIcon={menu.endIcon}
                       onClick={menu.handleClick}
-                      sx={{ color: '#fff', gap: 0.5 }}
+                      sx={{ color: theme.palette.text.primary, gap: 0.5 }}
                     >
                       <Typography
                         sx={{
-                          color: '#fff',
+                          color: theme.palette.text.primary,
                           display: 'block',
                           textDecoration: 'none',
                           fontWeight: 'bold',
@@ -196,7 +197,11 @@ const Header = () => {
                             textTransform: 'none',
                           }}
                         >
-                          <MUIMenuItem key={index} onClick={menu.handleClose}>
+                          <MUIMenuItem
+                            key={index}
+                            onClick={menu.handleClose}
+                            sx={{ color: theme.palette.text.primary }}
+                          >
                             {sub}
                           </MUIMenuItem>
                         </Link>
@@ -209,7 +214,7 @@ const Header = () => {
                     style={{
                       display: 'flex',
                       textDecoration: 'none',
-                      color: '#fff',
+                      color: theme.palette.text.primary,
                     }}
                   >
                     <Stack
@@ -221,7 +226,7 @@ const Header = () => {
                       {menu.startIcon}
                       <Typography
                         sx={{
-                          color: 'white',
+                          color: theme.palette.text.primary,
                           display: 'block',
                           textDecoration: 'none',
                           fontWeight: 'bold',

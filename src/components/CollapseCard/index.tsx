@@ -12,6 +12,7 @@ import { Serie } from '../../Types/Set';
 import { useState } from 'react';
 import pokeballIcon from '../../assets/img/PokeballIcon.png';
 import { useNavigate } from 'react-router-dom';
+import theme from '../../utils/style/theme';
 
 interface CollapseProps {
   serie: Serie;
@@ -27,6 +28,7 @@ const CollapseCard = ({ serie }: CollapseProps) => {
         borderRadius: '10px',
         boxSizing: 'border-box',
         alignItems: 'center',
+        backgroundColor: theme.palette.primary.main,
       }}
     >
       <CardHeader

@@ -1,14 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import HomeLogo from '../../assets/img/pokecardexLogo.png';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Stack } from '@mui/material';
 import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 import CachedOutlinedIcon from '@mui/icons-material/CachedOutlined';
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
@@ -19,7 +11,8 @@ import { useQuery } from 'react-query';
 import { getAllSets } from '../../Service/PokemontcgSDK';
 import CommunityCard from '../../components/CommunityCard';
 import HomeSetsCard from '../../components/HomeSetsCard';
-
+import theme from '../../utils/style/theme';
+import ConcreteSeamless from '../../assets/img/concreteSeamless.png';
 const homeButtons: buttons[] = [
   {
     name: 'Forums',
@@ -44,7 +37,7 @@ const homeButtons: buttons[] = [
 ];
 
 const community = ['News', 'Articles'];
-const cardSets = ['International sets', 'Japanese sets'];
+const cardSets = ['International', 'Japanese'];
 
 const Home = () => {
   const navigate = useNavigate();
@@ -54,7 +47,6 @@ const Home = () => {
     isLoading: setLoading,
     error: setError,
   } = useQuery<SetData[]>('allSets', getAllSets, {
-    staleTime: 1000 * 60 * 5,
     cacheTime: 1000 * 60 * 30,
   });
 
@@ -65,7 +57,7 @@ const Home = () => {
         flexDirection: 'column',
         width: '100%',
         margin: 'auto',
-        backgroundColor: '#EFEFEF',
+        backgroundImage: `url(${ConcreteSeamless})`,
       }}
     >
       <Box sx={{ maxWidth: '1320px', width: '100%', mr: 'auto', ml: 'auto' }}>
@@ -105,7 +97,11 @@ const Home = () => {
                   width: '100%',
                   borderRadius: '15px',
                   fontWeight: 'bold',
-                  backgroundColor: 'white',
+                  color: theme.palette.text.primary,
+                  backgroundColor: theme.palette.primary.main,
+                  '&:hover': {
+                    backgroundColor: theme.palette.primary.main,
+                  },
                 }}
               >
                 {button.name}

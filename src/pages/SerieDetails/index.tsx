@@ -1,25 +1,21 @@
-import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
+import { Box, Grid, Stack } from '@mui/material';
 import HomeLogo from '../../assets/img/pokecardexLogo.png';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getAllSets, getSetCards } from '../../Service/PokemontcgSDK';
-import {
-  Serie,
-  CardData,
-  SetData,
-  FilterName,
-  FilterArrayData,
-} from '../../Types/Set';
+import { Serie, CardData, SetData, FilterArrayData } from '../../Types/Set';
 import CardsContainer from '../../components/CardsContainer';
-import CollapseCard from '../../components/CollapseCard';
 import Banner from '../../components/Banner';
 import FiltersContainer from '../../components/FiltersContainer';
+import CardsLayout from '../../components/CardsLayout';
 import { useQuery } from 'react-query';
+import CardLoading from '../../components/CardsLoading';
 import {
   addFiltersValue,
   addUniqueFilter,
   parseAndFormatSets,
 } from '../../utils/dataProcessing';
+import ConcreteSeamless from '../../assets/img/concreteSeamless.png';
 
 type UseStateHook<T> = [T, React.Dispatch<React.SetStateAction<T>>];
 
@@ -34,13 +30,21 @@ const SerieDetails = () => {
     isLoading: setLoading,
     error: setError,
   } = useQuery<SetData[]>('allSets', getAllSets, {
-    staleTime: 1000 * 60 * 5,
     cacheTime: 1000 * 60 * 30,
   });
   const seriesFormated: Serie[] = useMemo(
     () => parseAndFormatSets(setsData),
     [setsData]
   );
+  const set: SetData | null = useMemo(() => {
+    for (const serie of setsData || []) {
+      if (serie.id === setId) {
+        console.log('trigger');
+        return serie;
+      }
+    }
+    return null;
+  }, [setsData, setId]);
 
   const {
     data: cards = [],
@@ -52,25 +56,32 @@ const SerieDetails = () => {
     {
       keepPreviousData: true,
       enabled: !!setId,
-      staleTime: 1000 * 60 * 5,
       cacheTime: 1000 * 60 * 30,
-      onSuccess: (data) => {
-        let rarities: FilterArrayData[] = [
-          { name: 'All Filters', value: -1, active: true },
-        ];
-        data.forEach((card) => {
-          rarities = addUniqueFilter(rarities, card.rarity);
-        });
-        rarities = addFiltersValue(rarities).sort((a, b) => a.value - b.value);
-        setFilters(rarities);
-      },
     }
   );
+
+  const rarities = useMemo(() => {
+    let tmpRarities: FilterArrayData[] = [
+      { name: 'All Filters', value: -1, active: true },
+    ];
+    cards.forEach((card) => {
+      tmpRarities = addUniqueFilter(tmpRarities, card.rarity);
+    });
+    tmpRarities = addFiltersValue(tmpRarities).sort(
+      (a, b) => a.value - b.value
+    );
+
+    return tmpRarities;
+  }, [cards]);
+
+  useEffect(() => {
+    setFilters(rarities);
+  }, [rarities]);
 
   return (
     <main
       style={{
-        backgroundColor: '#EFEFEF',
+        backgroundImage: `url(${ConcreteSeamless})`,
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
@@ -102,47 +113,28 @@ const SerieDetails = () => {
               style={{ cursor: 'pointer', maxWidth: '100%', height: 'auto' }}
             />
           </Box>
-          <Box>
-            <Stack direction='row' gap={2}>
-              <Box
-                sx={{
-                  width: { xs: '0%', sm: '25%' },
-                  display: { xs: 'none', sm: 'block' },
-                  pl: 2,
-                  pr: 2,
-                  boxSizing: 'border-box',
-                }}
-              >
-                <Stack direction='column' justifyContent='center'>
-                  {seriesFormated.map((serieDetails, index) => (
-                    <CollapseCard key={index} serie={serieDetails} />
-                  ))}
-                </Stack>
-              </Box>
-              <Box sx={{ width: { xs: '100%', sm: '75%' }, pl: 2, pr: 2 }}>
-                <Stack direction='column' gap={3}>
-                  {isLoading ? (
-                    <p>Loading....</p>
-                  ) : error ? (
-                    <p>An error as occured, please try again later.</p>
-                  ) : (
-                    <>
-                      <Banner card={cards[0]} />
-                      <Box>
-                        <FiltersContainer
-                          filters={filters}
-                          setFilters={setFilters}
-                        />
-                      </Box>
-                      <Box>
-                        <CardsContainer cards={cards} filters={filters} />
-                      </Box>
-                    </>
-                  )}
-                </Stack>
-              </Box>
+          <CardsLayout seriesFormated={seriesFormated}>
+            <Stack direction='column' gap={3}>
+              <Banner set={set} />
+              {isLoading ? (
+                <CardLoading totalCards={set?.total} />
+              ) : error ? (
+                <p>An error as occured, please try again later.</p>
+              ) : (
+                <>
+                  <Box>
+                    <FiltersContainer
+                      filters={filters}
+                      setFilters={setFilters}
+                    />
+                  </Box>
+                  <Box>
+                    <CardsContainer cards={cards} filters={filters} />
+                  </Box>
+                </>
+              )}
             </Stack>
-          </Box>
+          </CardsLayout>
         </Stack>
       </Box>
     </main>

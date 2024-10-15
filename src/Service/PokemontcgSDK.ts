@@ -44,3 +44,8 @@ export const getSetCards = async (setId: string): Promise<CardData[]> => {
   const data = await fetchFromApi(`/cards?q=set.id:${setId}`);
   return data?.data ?? [];
 };
+
+export const getCardsByName = async (name: string): Promise<CardData[]> => {
+  const data = await fetchFromApi(`/cards?q=name:*${name}*`);
+  return data?.data ?? [];
+};

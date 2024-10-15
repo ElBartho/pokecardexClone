@@ -1,5 +1,6 @@
 import { Card, CardContent, Button, Stack, Typography } from '@mui/material';
 import newsImg from '../../assets/img/news.png';
+import theme from '../../utils/style/theme';
 
 interface CommunityCardProps {
   section: string;
@@ -8,12 +9,25 @@ interface CommunityCardProps {
 
 const CommunityCard = ({ section, index }: CommunityCardProps) => {
   return (
-    <Card key={index} sx={{ width: '100%', borderRadius: '15px' }}>
+    <Card
+      key={index}
+      sx={{
+        width: '100%',
+        borderRadius: '15px',
+        backgroundColor: theme.palette.primary.main,
+      }}
+    >
       <CardContent sx={{ textAlign: 'center' }}>
         <Stack direction='column' sx={{ gap: 3 }}>
           <Typography variant='h3'>{section}</Typography>
           {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => (
-            <Card key={index} sx={{ width: '100%' }}>
+            <Card
+              key={index}
+              sx={{
+                width: '100%',
+                backgroundColor: theme.palette.secondary.main,
+              }}
+            >
               <CardContent>
                 <Stack
                   direction='row'

@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { SetData } from '../../Types/Set';
 import { useNavigate } from 'react-router-dom';
+import theme from '../../utils/style/theme';
 
 interface HomeSetsCardProps {
   section: string;
@@ -25,12 +26,13 @@ const HomeSetsCard = ({ section, series, index }: HomeSetsCardProps) => {
       sx={{
         width: '100%',
         borderRadius: '15px',
+        backgroundColor: theme.palette.primary.main,
       }}
     >
       <CardContent>
         <Stack direction='column' gap={3} sx={{ borderRadius: '10px' }}>
           <Typography variant='h3' sx={{ fontWeight: '500' }}>
-            {section}
+            {`${section} sets`}
           </Typography>
           {series ? (
             <Grid container rowSpacing={2} columnSpacing={3}>
@@ -46,6 +48,7 @@ const HomeSetsCard = ({ section, series, index }: HomeSetsCardProps) => {
                       sx={{
                         borderRadius: '15px',
                         cursor: 'pointer',
+                        backgroundColor: theme.palette.secondary.main,
                       }}
                       onClick={() => navigate(`/series/${set.id}`)}
                     >
@@ -101,13 +104,16 @@ const HomeSetsCard = ({ section, series, index }: HomeSetsCardProps) => {
             variant='outlined'
             onClick={() => navigate('/series')}
             sx={{
+              color: theme.palette.text.primary,
+              backgroundColor: theme.palette.secondary.main,
               borderRadius: '15px',
               width: '100%',
               textTransform: 'none',
               fontSize: 16,
+              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
             }}
           >
-            All international sets
+            {`All ${section.toLowerCase()} sets`}
           </Button>
         </Stack>
       </CardContent>
