@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import HomeLogo from '../../assets/img/pokecardexLogo.png';
-import { Box, Button, Stack } from '@mui/material';
+import { Box, Button, Stack, TextField } from '@mui/material';
 import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 import CachedOutlinedIcon from '@mui/icons-material/CachedOutlined';
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
@@ -13,6 +13,10 @@ import CommunityCard from '../../components/CommunityCard';
 import HomeSetsCard from '../../components/HomeSetsCard';
 import theme from '../../utils/style/theme';
 import ConcreteSeamless from '../../assets/img/concreteSeamless.png';
+import news from '../../utils/news.json';
+import articles from '../../utils/articles.json';
+import { CommunityData } from '../../Types/Set';
+
 const homeButtons: buttons[] = [
   {
     name: 'Forums',
@@ -36,12 +40,15 @@ const homeButtons: buttons[] = [
   },
 ];
 
-const community = ['News', 'Articles'];
-const cardSets = ['International', 'Japanese'];
+const community: CommunityData[] = [
+  { title: 'News', data: news },
+  { title: 'Articles', data: articles },
+];
+const cardSets: string[] = ['International', 'Japanese'];
 
 const Home = () => {
   const navigate = useNavigate();
-
+  const [searchValue, setSearchValue] = useState<string>('');
   const {
     data: series,
     isLoading: setLoading,
@@ -49,6 +56,14 @@ const Home = () => {
   } = useQuery<SetData[]>('allSets', getAllSets, {
     cacheTime: 1000 * 60 * 30,
   });
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
+    if (searchValue && searchValue.trim() !== '') {
+      navigate(`/search/en?name=${searchValue}`);
+      setSearchValue('');
+    }
+  };
 
   return (
     <main
@@ -108,6 +123,38 @@ const Home = () => {
               </Button>
             ))}
           </Stack>
+          <Box
+            component='form'
+            onSubmit={handleSearch}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxSizing: 'border-box',
+              width: '100%',
+            }}
+          >
+            <TextField
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              placeholder='Search a card'
+              variant='outlined'
+              fullWidth
+              margin='normal'
+              InputProps={{
+                style: {
+                  borderRadius: '15px',
+                },
+              }}
+              sx={{
+                mt: '0',
+                borderRadius: '15px',
+                input: {
+                  textAlign: 'center',
+                },
+              }}
+            />
+          </Box>
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
             sx={{ width: '100%', gap: 3 }}
@@ -126,7 +173,7 @@ const Home = () => {
                   key={index}
                   index={index}
                   section={section}
-                  series={series ? series : []}
+                  series={series ? series.slice(0, 12) : []}
                 />
               ))}
             </Stack>

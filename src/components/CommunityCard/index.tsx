@@ -1,11 +1,7 @@
 import { Card, CardContent, Button, Stack, Typography } from '@mui/material';
 import newsImg from '../../assets/img/news.png';
 import theme from '../../utils/style/theme';
-
-interface CommunityCardProps {
-  section: string;
-  index: number;
-}
+import { CommunityCardProps } from '../../Types/Set/index';
 
 const CommunityCard = ({ section, index }: CommunityCardProps) => {
   return (
@@ -17,28 +13,36 @@ const CommunityCard = ({ section, index }: CommunityCardProps) => {
         backgroundColor: theme.palette.primary.main,
       }}
     >
-      <CardContent sx={{ textAlign: 'center' }}>
+      <CardContent>
         <Stack direction='column' sx={{ gap: 3 }}>
-          <Typography variant='h3'>{section}</Typography>
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => (
+          <Typography variant='h3' sx={{ textAlign: 'center' }}>
+            {section.title}
+          </Typography>
+          {section.data.slice(0, 8).map((item, index) => (
             <Card
               key={index}
               sx={{
                 width: '100%',
+                maxHeight: '100px',
+                borderRadius: '15px',
                 backgroundColor: theme.palette.secondary.main,
               }}
             >
-              <CardContent>
+              <CardContent
+                sx={{
+                  p: '0 !important',
+                }}
+              >
                 <Stack
                   direction='row'
                   sx={{
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 3,
+                    justifyContent: 'flex-start',
+                    gap: 2,
                   }}
                 >
                   <img
-                    src={newsImg}
+                    src={item.image_url}
                     style={{
                       width: '150px',
                       height: '100px',
@@ -46,7 +50,20 @@ const CommunityCard = ({ section, index }: CommunityCardProps) => {
                     }}
                     alt='alt img'
                   />
-                  <p>Contenu de la card</p>
+                  <Stack direction='column' gap={2} alignItems='flex-start'>
+                    <Typography
+                      variant='subtitle1'
+                      sx={{
+                        fontWeight: 'bold',
+                        textAlign: 'left',
+                      }}
+                    >
+                      {item.title}
+                    </Typography>
+                    <Typography variant='subtitle1'>
+                      By {item.author}, on {item.date}
+                    </Typography>
+                  </Stack>
                 </Stack>
               </CardContent>
             </Card>
@@ -54,13 +71,16 @@ const CommunityCard = ({ section, index }: CommunityCardProps) => {
           <Button
             variant='outlined'
             sx={{
+              color: theme.palette.text.primary,
+              backgroundColor: theme.palette.secondary.main,
               borderRadius: '15px',
               width: '100%',
               textTransform: 'none',
               fontSize: 16,
+              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
             }}
           >
-            More {section}...
+            More {section.title.toLowerCase()}...
           </Button>
         </Stack>
       </CardContent>

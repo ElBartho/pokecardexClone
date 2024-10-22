@@ -29,6 +29,7 @@ const CollapseCard = ({ serie }: CollapseProps) => {
         boxSizing: 'border-box',
         alignItems: 'center',
         backgroundColor: theme.palette.primary.main,
+        boxShadow: '0 4px 16px 4px rgba(0,0,0,0.2)',
       }}
     >
       <CardHeader

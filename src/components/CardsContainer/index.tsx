@@ -28,18 +28,30 @@ const CardsContainer = ({ cards, filters }: CardsContainerProps) => {
             sm={4}
             md={2}
             sx={{
-              boxSizing: 'border-box',
+              // boxSizing: 'border-box',
               display: filters.find((filter) => filter.name === card.rarity)
                 ?.active
                 ? 'block'
                 : 'none',
             }}
           >
-            <Box sx={{ boxSizing: 'border-box' }}>
+            <Box
+              sx={
+                {
+                  // boxSizing: 'border-box',
+                  // boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
+                }
+              }
+            >
               <img
                 src={card.images.small}
                 alt='Card'
-                style={{ maxWidth: '100%', height: 'auto' }}
+                style={{
+                  maxWidth: '100%',
+                  height: 'auto',
+                  borderRadius: '8px',
+                  boxShadow: '0 8px 16px 4px rgba(0,0,0,0.2)',
+                }}
                 onClick={() => openModal(card)}
               />
             </Box>

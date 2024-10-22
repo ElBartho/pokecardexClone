@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Box, Card, CardContent, Typography } from '@mui/material';
+import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
 import { CardData } from '../../Types/Set';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
@@ -133,7 +133,7 @@ const CardModal = ({ isOpen, onClose, card }: ModalProps) => {
             transition:
               'transform 0.1s ease, width 0.3s ease, height 0.3s ease',
             cursor: 'pointer',
-            borderRadius: isZoomed ? '25px' : '10px',
+            borderRadius: isZoomed ? '25px' : '13px',
             boxShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
           }}
           src={card.images.large}
@@ -146,16 +146,31 @@ const CardModal = ({ isOpen, onClose, card }: ModalProps) => {
             paddingTop: { xs: '16px', md: 0 },
           }}
         >
-          <Typography
-            variant='h4'
-            gutterBottom
-            sx={{ fontWeight: 'bold', color: '#3f51b5' }}
+          <Stack
+            direction='row'
+            justifyContent='space-between'
+            alignItems='center'
+            gap={3}
           >
-            {card.name}
-          </Typography>
+            <Typography
+              variant='h4'
+              gutterBottom
+              sx={{ fontWeight: 'bold', color: '#3f51b5' }}
+            >
+              {card.name}
+            </Typography>
+            <Typography variant='h6' color='text.secondary' gutterBottom>
+              {card.number}/{card.set.total}
+            </Typography>
+          </Stack>
           {card.hp && (
             <Typography variant='h6' color='text.secondary' gutterBottom>
               HP: {card.hp}
+            </Typography>
+          )}
+          {card.evolvesFrom && (
+            <Typography variant='body1' gutterBottom>
+              Evolves from: <strong>{card.evolvesFrom}</strong>
             </Typography>
           )}
           {card.evolvesTo && card.evolvesTo.length > 0 && (

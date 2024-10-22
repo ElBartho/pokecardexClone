@@ -1,4 +1,4 @@
-import { Box, Grid, Stack } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import HomeLogo from '../../assets/img/pokecardexLogo.png';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -8,7 +8,7 @@ import CardsContainer from '../../components/CardsContainer';
 import Banner from '../../components/Banner';
 import FiltersContainer from '../../components/FiltersContainer';
 import CardsLayout from '../../components/CardsLayout';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import CardLoading from '../../components/CardsLoading';
 import {
   addFiltersValue,
@@ -21,6 +21,7 @@ type UseStateHook<T> = [T, React.Dispatch<React.SetStateAction<T>>];
 
 const SerieDetails = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [filters, setFilters]: UseStateHook<FilterArrayData[]> = useState<
     FilterArrayData[]
   >([]);
@@ -46,8 +47,10 @@ const SerieDetails = () => {
     return null;
   }, [setsData, setId]);
 
+  // const cachedData = queryClient.getQueryData(['allCards', setId]);
   const {
     data: cards = [],
+    isFetching,
     isLoading,
     error,
   } = useQuery<CardData[]>(
@@ -57,6 +60,7 @@ const SerieDetails = () => {
       keepPreviousData: true,
       enabled: !!setId,
       cacheTime: 1000 * 60 * 30,
+      staleTime: 1000 * 60 * 5,
     }
   );
 
@@ -114,26 +118,42 @@ const SerieDetails = () => {
             />
           </Box>
           <CardsLayout seriesFormated={seriesFormated}>
-            <Stack direction='column' gap={3}>
-              <Banner set={set} />
-              {isLoading ? (
-                <CardLoading totalCards={set?.total} />
-              ) : error ? (
-                <p>An error as occured, please try again later.</p>
-              ) : (
-                <>
-                  <Box>
-                    <FiltersContainer
-                      filters={filters}
-                      setFilters={setFilters}
-                    />
-                  </Box>
-                  <Box>
-                    <CardsContainer cards={cards} filters={filters} />
-                  </Box>
-                </>
+            <Box position='relative'>
+              {isFetching && (
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    bgcolor: 'rgba(255, 255, 255, 0.6)',
+                    zIndex: 1,
+                    borderRadius: '15px',
+                    backdropFilter: 'blur(4px)',
+                  }}
+                ></Box>
               )}
-            </Stack>
+              <Stack direction='column' gap={3}>
+                <Banner set={set} />
+                {isLoading ? (
+                  <CardLoading totalCards={set?.total} />
+                ) : error ? (
+                  <p>An error as occured, please try again later.</p>
+                ) : (
+                  <>
+                    <Box>
+                      <FiltersContainer
+                        filters={filters}
+                        setFilters={setFilters}
+                      />
+                    </Box>
+                    <CardsContainer cards={cards} filters={filters} />
+                  </>
+                )}
+              </Stack>
+            </Box>
           </CardsLayout>
         </Stack>
       </Box>

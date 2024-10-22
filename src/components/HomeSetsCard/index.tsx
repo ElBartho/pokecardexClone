@@ -36,66 +36,60 @@ const HomeSetsCard = ({ section, series, index }: HomeSetsCardProps) => {
           </Typography>
           {series ? (
             <Grid container rowSpacing={2} columnSpacing={3}>
-              {series
-                .sort(
-                  (a, b) =>
-                    Date.parse(b.releaseDate) - Date.parse(a.releaseDate)
-                )
-                .slice(0, 12)
-                .map((set, index) => (
-                  <Grid key={index} item xs={12} md={6}>
-                    <Card
+              {series.map((set, index) => (
+                <Grid key={index} item xs={12} md={6}>
+                  <Card
+                    sx={{
+                      borderRadius: '15px',
+                      cursor: 'pointer',
+                      backgroundColor: theme.palette.secondary.main,
+                    }}
+                    onClick={() => navigate(`/series/${set.id}`)}
+                  >
+                    <CardContent
                       sx={{
-                        borderRadius: '15px',
-                        cursor: 'pointer',
-                        backgroundColor: theme.palette.secondary.main,
+                        p: '0 !important',
                       }}
-                      onClick={() => navigate(`/series/${set.id}`)}
                     >
-                      <CardContent
-                        sx={{
-                          p: '0 !important',
-                        }}
+                      <Stack
+                        direction='row'
+                        alignItems='center'
+                        justifyContent='center'
+                        sx={{ width: '100%', height: '100px' }}
                       >
-                        <Stack
-                          direction='row'
-                          alignItems='center'
-                          justifyContent='center'
-                          sx={{ width: '100%', height: '100px' }}
+                        <Box
+                          sx={{
+                            ml: 3,
+                          }}
                         >
-                          <Box
-                            sx={{
-                              ml: 3,
+                          <img
+                            src={set.images.symbol}
+                            alt='symbol'
+                            style={{ maxHeight: '30px' }}
+                          />
+                        </Box>
+                        <Box
+                          sx={{
+                            width: '100%',
+                            p: 2,
+                            boxSizing: 'border-box',
+                          }}
+                        >
+                          <img
+                            src={set.images.logo}
+                            alt='img set'
+                            style={{
+                              maxWidth: '100%',
+                              height: 'auto',
+                              maxHeight: '90px',
                             }}
-                          >
-                            <img
-                              src={set.images.symbol}
-                              alt='symbol'
-                              style={{ maxHeight: '30px' }}
-                            />
-                          </Box>
-                          <Box
-                            sx={{
-                              width: '100%',
-                              p: 2,
-                              boxSizing: 'border-box',
-                            }}
-                          >
-                            <img
-                              src={set.images.logo}
-                              alt='img set'
-                              style={{
-                                maxWidth: '100%',
-                                height: 'auto',
-                                maxHeight: '90px',
-                              }}
-                            />
-                          </Box>
-                        </Stack>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
+                          />
+                        </Box>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
             </Grid>
           ) : (
             <p>chargement...</p>

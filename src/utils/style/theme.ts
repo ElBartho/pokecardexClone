@@ -1,3 +1,4 @@
+import { outlinedInputClasses } from '@mui/material/OutlinedInput';
 import { createTheme, Theme } from '@mui/material/styles';
 
 const theme: Theme = createTheme({
@@ -13,6 +14,28 @@ const theme: Theme = createTheme({
       secondary: '#055EB0',
     },
     mode: 'light',
+  },
+  components: {
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#fff',
+          borderColor: '#055EB0',
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        notchedOutline: {
+          borderColor: '#055EB0',
+        },
+        root: {
+          [`&.Mui-focused .${outlinedInputClasses.notchedOutline}`]: {
+            borderColor: '#055EB0',
+          },
+        },
+      },
+    },
   },
 });
 

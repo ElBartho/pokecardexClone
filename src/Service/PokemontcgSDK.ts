@@ -24,7 +24,7 @@ const fetchFromApi = async (endpoint: string) => {
 // Call API for Sets:
 
 export const getAllSets = async (): Promise<SetData[]> => {
-  const data = await fetchFromApi('/sets');
+  const data = await fetchFromApi('/sets?orderBy=-releaseDate');
   return data?.data ?? [];
 };
 
@@ -41,11 +41,13 @@ export const getSet = async (setId: string): Promise<SetData> => {
 // Call API for Cards
 
 export const getSetCards = async (setId: string): Promise<CardData[]> => {
-  const data = await fetchFromApi(`/cards?q=set.id:${setId}`);
+  const data = await fetchFromApi(`/cards?q=set.id:${setId}&orderBy=number`);
   return data?.data ?? [];
 };
 
 export const getCardsByName = async (name: string): Promise<CardData[]> => {
-  const data = await fetchFromApi(`/cards?q=name:*${name}*`);
+  const data = await fetchFromApi(
+    `/cards?q=name:*${name}*&orderBy=releaseDate`
+  );
   return data?.data ?? [];
 };

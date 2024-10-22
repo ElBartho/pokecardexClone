@@ -1,4 +1,4 @@
-import { Box, Grid, Stack } from '@mui/material';
+import { Box, Card, CardContent, Grid, Stack, Typography } from '@mui/material';
 import ConcreteSeamless from '../../assets/img/concreteSeamless.png';
 import HomeLogo from '../../assets/img/pokecardexLogo.png';
 import CardsLayout from '../../components/CardsLayout';
@@ -9,6 +9,7 @@ import { getAllSets, getCardsByName } from '../../Service/PokemontcgSDK';
 import { parseAndFormatSets } from '../../utils/dataProcessing';
 import { useMemo, useState } from 'react';
 import CardModal from '../../components/Modal';
+import theme from '../../utils/style/theme';
 
 const SearchCards = () => {
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
@@ -86,38 +87,98 @@ const SearchCards = () => {
             />
           </Box>
           <CardsLayout seriesFormated={seriesFormated}>
-            <Box>
-              <Grid container rowSpacing={2} columnSpacing={3}>
-                {cards?.map((card, index) => (
-                  <Grid
-                    key={index}
-                    item
-                    xs={6}
-                    sm={4}
-                    md={2}
-                    sx={{
-                      boxSizing: 'border-box',
-                      display: 'block',
-                    }}
-                  >
-                    <Box sx={{ boxSizing: 'border-box' }}>
-                      <img
-                        src={card.images.small}
-                        alt='Card'
-                        style={{ maxWidth: '100%', height: 'auto' }}
-                        onClick={() => openModal(card)}
-                      />
-                    </Box>
-                  </Grid>
-                ))}
-              </Grid>
-              {selectedCard && (
-                <CardModal
-                  isOpen={!!selectedCard}
-                  onClose={closeModal}
-                  card={selectedCard}
-                />
+            <Box position='relative'>
+              {isFetching && (
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    bgcolor: 'rgba(255, 255, 255, 0.6)',
+                    zIndex: 1,
+                    borderRadius: '15px',
+                    backdropFilter: 'blur(4px)',
+                  }}
+                ></Box>
               )}
+              <Stack direction='column' gap={2}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: theme.palette.primary.main,
+                    padding: theme.spacing(3),
+                    borderRadius: '15px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  }}
+                >
+                  <Stack direction='column' gap={1} alignItems='center'>
+                    {isFetching ? (
+                      <Typography variant='h4' sx={{ fontWeight: 'bold' }}>
+                        Fetching cards...
+                      </Typography>
+                    ) : (
+                      <>
+                        <Typography variant='h4' sx={{ fontWeight: 'bold' }}>
+                          {cards.length} Cards Found
+                        </Typography>
+                        <Typography
+                          variant='h6'
+                          sx={{ opacity: 0.8, fontStyle: 'italic' }}
+                        >
+                          for "{name}"
+                        </Typography>
+                      </>
+                    )}
+                  </Stack>
+                </Box>
+                <Grid container rowSpacing={2} columnSpacing={3}>
+                  {cards
+                    ?.sort(
+                      (a, b) =>
+                        Date.parse(b.set.releaseDate) -
+                        Date.parse(a.set.releaseDate)
+                    )
+                    .map((card, index) => (
+                      <Grid
+                        key={index}
+                        item
+                        xs={6}
+                        sm={4}
+                        md={2}
+                        sx={{
+                          boxSizing: 'border-box',
+                          display: 'block',
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            boxSizing: 'border-box',
+                            boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
+                          }}
+                        >
+                          <img
+                            src={card.images.small}
+                            alt='Card'
+                            style={{ maxWidth: '100%', height: 'auto' }}
+                            onClick={() => openModal(card)}
+                          />
+                        </Box>
+                      </Grid>
+                    ))}
+                </Grid>
+                {selectedCard && (
+                  <CardModal
+                    isOpen={!!selectedCard}
+                    onClose={closeModal}
+                    card={selectedCard}
+                  />
+                )}
+              </Stack>
             </Box>
           </CardsLayout>
         </Stack>

@@ -1,4 +1,4 @@
-// Types And Interfaces for Buttons
+// Types And Intefaces for Home page
 
 export type buttons = {
   name: string;
@@ -6,6 +6,22 @@ export type buttons = {
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
 };
+
+export interface CommunityCardProps {
+  section: CommunityData;
+  index: number;
+}
+export interface NewsArticlesData {
+  title: string;
+  author: string;
+  image_url: string;
+  date: string;
+}
+
+export interface CommunityData {
+  title: string;
+  data: NewsArticlesData[];
+}
 
 // Types And Interfaces for Sets
 

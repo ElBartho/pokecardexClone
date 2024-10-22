@@ -14,8 +14,8 @@ const Banner = ({ set }: BannerProps) => {
         <Card
           sx={{
             borderRadius: '10px',
-            boxSizing: 'border-box',
             backgroundColor: theme.palette.primary.main,
+            boxShadow: '0 4px 16px 4px rgba(0,0,0,0.2)',
           }}
         >
           <CardContent

@@ -42,24 +42,10 @@ export const parseAndFormatSets = (setsData: SetData[] = []): Serie[] => {
         date: releaseDate,
       });
     }
-
     const seriesData = seriesMap.get(series);
     seriesData.sets.push(set);
-
-    if (Date.parse(releaseDate) < Date.parse(seriesData.date)) {
-      seriesData.date = releaseDate;
-    }
   });
-
-  seriesMap.forEach((seriesData) => {
-    seriesData.sets.sort(
-      (a: SetData, b: SetData) =>
-        Date.parse(b.releaseDate) - Date.parse(a.releaseDate)
-    );
-  });
-  return Array.from(seriesMap.values()).sort(
-    (a, b) => Date.parse(b.date) - Date.parse(a.date)
-  );
+  return Array.from(seriesMap.values());
 };
 
 export const addUniqueFilter = (

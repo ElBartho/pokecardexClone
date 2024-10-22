@@ -49,6 +49,7 @@ const FilterCard = ({ filter, onClick, children }: FilterCardProps) => {
         justifyContent: 'center',
         alignItems: 'center',
         cursor: 'pointer',
+        boxShadow: '0 4px 16px 4px rgba(0,0,0,0.2)',
       }}
     >
       <CardContent
@@ -137,6 +138,7 @@ const FiltersContainer = ({ filters, setFilters }: FiltersContainerProps) => {
               justifyContent: 'center',
               alignItems: 'center',
               cursor: 'pointer',
+              boxShadow: '0 4px 16px 4px rgba(0,0,0,0.2)',
             }}
           >
             <CardContent

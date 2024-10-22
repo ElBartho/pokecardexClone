@@ -1,10 +1,10 @@
-import { Box, Button, Input, Stack, TextField } from '@mui/material';
+import { Box, IconButton, Stack, TextField } from '@mui/material';
+import InputAdornment from '@mui/material/InputAdornment';
 import CollapseCard from '../CollapseCard';
 import { Serie } from '../../Types/Set';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import theme from '../../utils/style/theme';
 
 const CardsLayout = ({
   seriesFormated,
@@ -14,14 +14,13 @@ const CardsLayout = ({
   children: any;
 }) => {
   const navigate = useNavigate();
+  const [searchValue, setSearchValue] = useState<string>('');
 
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    const searchCard = (
-      e.currentTarget.elements.namedItem('searchInput') as HTMLInputElement
-    ).value;
-    if (searchCard) {
-      navigate(`/search/en?name=${searchCard}`);
+    if (searchValue && searchValue.trim() !== '') {
+      navigate(`/search/en?name=${searchValue}`);
+      setSearchValue('');
     }
   };
 
@@ -49,31 +48,29 @@ const CardsLayout = ({
                 width: '100%',
               }}
             >
-              <Button
-                type='submit'
-                variant='outlined'
-                sx={{
-                  backgroundColor: theme.palette.secondary.main,
-                  '&:hover': {
-                    backgroundColor: theme.palette.secondary.main,
-                  },
-                  color: theme.palette.text.primary,
-                  height: '48px',
-                  minWidth: '48px',
-                }}
-              >
-                <SearchOutlinedIcon />
-              </Button>
               <TextField
-                fullWidth
-                variant='filled'
-                color='primary'
-                type='text'
-                size='small'
-                name='searchInput'
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
                 placeholder='Search a card'
+                variant='outlined'
+                fullWidth
                 margin='normal'
-                // sx={{ height: '56px' }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position='start'>
+                      <IconButton type='submit'>
+                        <SearchOutlinedIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                  style: {
+                    borderRadius: '10px',
+                  },
+                }}
+                sx={{
+                  mt: '0',
+                  borderRadius: '10px',
+                }}
               />
             </Box>
             {seriesFormated.map((serieDetails, index) => (
